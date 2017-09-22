@@ -32,10 +32,7 @@ class DTIAnimRotatingPlane: DTIAnimProtocol {
     // -------------------------------------------------------------------------
     func needLayoutSubviews() {
         self.spinnerView.frame = self.owner.bounds
-        
-        let contentSize = self.owner.bounds.size
-        let sz = contentSize.width*3/5
-        self.planeView.frame = CGRectInset(self.owner.bounds, 2.0, 2.0);
+        self.planeView.frame = self.owner.bounds.insetBy(dx: 2.0, dy: 2.0);
     }
     
     func needUpdateColor() {
@@ -52,7 +49,7 @@ class DTIAnimRotatingPlane: DTIAnimProtocol {
         
         var anim = CAKeyframeAnimation()
         anim.keyPath = "transform"
-        anim.removedOnCompletion = false
+        anim.isRemovedOnCompletion = false
         anim.repeatCount = HUGE
         anim.duration = 1.2
         anim.keyTimes = [0.0, 0.45, 0.95]
@@ -62,12 +59,12 @@ class DTIAnimRotatingPlane: DTIAnimProtocol {
             CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         ]
         anim.values = [
-            NSValue(CATransform3D: self.transformPlane(1.0/120.0, angle: 0.0, x: 0.0, y: 0.0, z: 0.0)),
-            NSValue(CATransform3D: self.transformPlane(1.0/120.0, angle: CGFloat(M_PI), x: 0.0, y: 1.0, z: 0.0)),
-            NSValue(CATransform3D: self.transformPlane(1.0/120.0, angle: CGFloat(M_PI), x: 0.0, y: 0.0, z: 1.0))
+            NSValue(caTransform3D: self.transformPlane(perspective: 1.0/120.0, angle: 0.0, x: 0.0, y: 0.0, z: 0.0)),
+            NSValue(caTransform3D: self.transformPlane(perspective: 1.0/120.0, angle: CGFloat(Double.pi), x: 0.0, y: 1.0, z: 0.0)),
+            NSValue(caTransform3D: self.transformPlane(perspective: 1.0/120.0, angle: CGFloat(Double.pi), x: 0.0, y: 0.0, z: 1.0))
         ]
         
-        self.spinnerView.layer.addAnimation(anim, forKey: "DTIAnimRotatingPlane~animateCanvas")
+        self.spinnerView.layer.add(anim, forKey: "DTIAnimRotatingPlane~animateCanvas")
     }
     
     func stopActivity(animated: Bool) {
@@ -78,7 +75,9 @@ class DTIAnimRotatingPlane: DTIAnimProtocol {
         }
         
         if (animated) {
-            self.spinnerView.layer.dismissAnimated(removeAnimations)
+            self.spinnerView.layer.dismissAnimated {
+                removeAnimations()
+            }
         }
         else {
             removeAnimations()

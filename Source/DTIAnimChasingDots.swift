@@ -47,7 +47,7 @@ class DTIAnimChasingDots: DTIAnimProtocol {
     
     func needUpdateColor() {
         // Debug stuff
-        // self.spinnerView.backgroundColor = UIColor.grayColor()
+        // self.spinnerView.backgroundColor = UIColor.gray
         
         self.dot1View.backgroundColor = self.owner.indicatorColor
         self.dot2View.backgroundColor = self.owner.indicatorColor
@@ -66,8 +66,8 @@ class DTIAnimChasingDots: DTIAnimProtocol {
         let aniRot = CABasicAnimation()
         aniRot.keyPath = "transform.rotation"
         aniRot.fromValue = 0;
-        aniRot.toValue = CGFloat(2*M_PI);
-        aniRot.removedOnCompletion = false
+        aniRot.toValue = CGFloat(2*Double.pi);
+        aniRot.isRemovedOnCompletion = false
         aniRot.repeatCount = HUGE
         aniRot.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         aniRot.duration = self.animationDuration
@@ -75,7 +75,7 @@ class DTIAnimChasingDots: DTIAnimProtocol {
         let aniScale1 = CAKeyframeAnimation()
         aniScale1.keyPath = "transform.scale"
         aniScale1.values = [1, 0, 1]
-        aniScale1.removedOnCompletion = false
+        aniScale1.isRemovedOnCompletion = false
         aniScale1.repeatCount = HUGE
         aniScale1.timingFunctions = [
             CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut),
@@ -84,10 +84,10 @@ class DTIAnimChasingDots: DTIAnimProtocol {
         ]
         aniScale1.duration = self.animationDuration
         
-        var aniScale2 = CAKeyframeAnimation()
+        let aniScale2 = CAKeyframeAnimation()
         aniScale2.keyPath = "transform.scale"
         aniScale2.values = [0, 1, 0]
-        aniScale2.removedOnCompletion = false
+        aniScale2.isRemovedOnCompletion = false
         aniScale2.repeatCount = HUGE
         aniScale2.timingFunctions = [
             CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut),
@@ -96,9 +96,9 @@ class DTIAnimChasingDots: DTIAnimProtocol {
         ]
         aniScale2.duration = self.animationDuration
         
-        self.spinnerView.layer.addAnimation(aniRot, forKey: "DTIAnimChasingDots~aniRot")
-        self.dot1View.layer.addAnimation(aniScale1, forKey: "DTIAnimChasingDots~aniScale1")
-        self.dot2View.layer.addAnimation(aniScale2, forKey: "DTIAnimChasingDots~aniScale2")
+        self.spinnerView.layer.add(aniRot, forKey: "DTIAnimChasingDots~aniRot")
+        self.dot1View.layer.add(aniScale1, forKey: "DTIAnimChasingDots~aniScale1")
+        self.dot2View.layer.add(aniScale2, forKey: "DTIAnimChasingDots~aniScale2")
     }
     
     func stopActivity(animated: Bool) {
@@ -111,7 +111,9 @@ class DTIAnimChasingDots: DTIAnimProtocol {
         }
         
         if (animated) {
-            self.spinnerView.layer.dismissAnimated(removeAnimations)
+            self.spinnerView.layer.dismissAnimated {
+                removeAnimations()
+            }
         }
         else {
             removeAnimations()

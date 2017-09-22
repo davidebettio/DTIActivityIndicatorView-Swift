@@ -21,7 +21,7 @@ class DTIAnimWp8: DTIAnimProtocol {
     init(indicatorView: DTIActivityIndicatorView) {
         self.owner = indicatorView
         
-        for var index = 0; index < ballCount; ++index {
+        for _ in 0..<ballCount {
             let layer = CALayer()
             let layerBall = CALayer()
             layer.opacity = 0.0
@@ -39,9 +39,9 @@ class DTIAnimWp8: DTIAnimProtocol {
         
         let ballSize = CGFloat(self.owner.bounds.width / 9)
         
-        for var index = 0; index < ballCount; ++index {
-            let layer = self.spinnerView.layer.sublayers[index] as! CALayer
-            let layerBall = layer.sublayers[0] as! CALayer
+        for index in 0..<ballCount {
+            let layer = self.spinnerView.layer.sublayers![index]
+            let layerBall = layer.sublayers![0]
             
             layer.frame = self.owner.bounds
             layerBall.frame = CGRect(x: ballSize, y: ballSize, width: ballSize, height: ballSize)
@@ -52,14 +52,13 @@ class DTIAnimWp8: DTIAnimProtocol {
     
     func needUpdateColor() {
         // Debug stuff
-        // self.spinnerView.backgroundColor = UIColor.grayColor()
+        // self.spinnerView.backgroundColor = UIColor.gray
         
-        for item in self.spinnerView.layer.sublayers {
-            let layer = item as! CALayer
-            let layerBall = layer.sublayers[0] as! CALayer
+        for layer in self.spinnerView.layer.sublayers! {
+            let layerBall = layer.sublayers![0]
             
-            //layer.backgroundColor = UIColor.grayColor().CGColor
-            layerBall.backgroundColor = self.owner.indicatorColor.CGColor
+            //layer.backgroundColor = UIColor.gray.cgColor
+            layerBall.backgroundColor = self.owner.indicatorColor.cgColor
         }
     }
     
@@ -72,8 +71,8 @@ class DTIAnimWp8: DTIAnimProtocol {
         
         let beginTime = CACurrentMediaTime();
         let delays = [CFTimeInterval(1.56), CFTimeInterval(0.31), CFTimeInterval(0.62), CFTimeInterval(0.94), CFTimeInterval(1.25)]
-        for var index = 0; index < ballCount; ++index {
-            let layer = self.spinnerView.layer.sublayers[index] as! CALayer
+        for index in 0..<ballCount {
+            let layer = self.spinnerView.layer.sublayers![index]
             
             let anim = CAKeyframeAnimation(keyPath: "transform.rotation.z")
             anim.duration = self.animationDuration
@@ -91,12 +90,12 @@ class DTIAnimWp8: DTIAnimProtocol {
                 CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault),
                 CAMediaTimingFunction(name: kCAMediaTimingFunctionDefault),
             ]
-            var rotationsValues = [CGFloat(M_PI)]
-            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(M_PI*(300.0-180.0)/180.0))
-            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(M_PI*(410.0-300.0)/180.0))
-            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(M_PI*(645.0-410.0)/180.0))
-            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(M_PI*(770.0-645.0)/180.0))
-            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(M_PI*(900.0-770.0)/180.0))
+            var rotationsValues = [CGFloat(Double.pi)]
+            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(Double.pi*(300.0-180.0)/180.0))
+            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(Double.pi*(410.0-300.0)/180.0))
+            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(Double.pi*(645.0-410.0)/180.0))
+            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(Double.pi*(770.0-645.0)/180.0))
+            rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(Double.pi*(900.0-770.0)/180.0))
             rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(0))
             rotationsValues.append(CGFloat(rotationsValues[rotationsValues.count-1]) + CGFloat(0))
             anim.values = rotationsValues
@@ -108,13 +107,13 @@ class DTIAnimWp8: DTIAnimProtocol {
             
             let aniGroup = CAAnimationGroup();
             aniGroup.fillMode = kCAFillModeForwards;
-            aniGroup.removedOnCompletion = false
+            aniGroup.isRemovedOnCompletion = false
             aniGroup.repeatCount = HUGE
             aniGroup.duration = self.animationDuration;
             aniGroup.animations = [anim, aniOpacity];
             aniGroup.beginTime = beginTime + delays[index]
 
-            layer.addAnimation(aniGroup, forKey: nil)
+            layer.add(aniGroup, forKey: nil)
         }
     }
     
@@ -122,8 +121,8 @@ class DTIAnimWp8: DTIAnimProtocol {
         func removeAnimations() {
             self.spinnerView.layer.removeAllAnimations()
 
-            for var index = 0; index < ballCount; ++index {
-                let layer = self.spinnerView.layer.sublayers[index] as! CALayer
+            for index in 0..<ballCount {
+                let layer = self.spinnerView.layer.sublayers![index]
                 layer.removeAllAnimations()
             }
             
@@ -131,7 +130,9 @@ class DTIAnimWp8: DTIAnimProtocol {
         }
 
         if (animated) {
-            self.spinnerView.layer.dismissAnimated(removeAnimations)
+            self.spinnerView.layer.dismissAnimated {
+                removeAnimations()
+            }
         }
         else {
             removeAnimations()
